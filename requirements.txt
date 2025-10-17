@@ -1,0 +1,10 @@
+yfinance
+pandas
+numpy
+sqlalchemy
+matplotlib
+loguru
+python-dotenv
+schedule
+tabulate
+tqdm
