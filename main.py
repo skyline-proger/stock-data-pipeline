@@ -1,0 +1,71 @@
+import os
+import pandas as pd
+import yfinance as yf
+import sqlite3
+from datetime import datetime, timedelta
+from tqdm import tqdm
+from dotenv import load_dotenv
+import schedule
+import time
+#from tqdm import tqdm
+#tqdm.monitor_interval = 0
+
+
+# === Настройки ===
+load_dotenv()
+DB_PATH = os.getenv("DB_PATH", "data/stocks.db")
+TICKERS = os.getenv("TICKERS").split(",")
+
+def get_last_date(conn, ticker):
+    query = f"SELECT MAX(Date) FROM stocks_data WHERE ticker='{ticker}'"
+    result = conn.execute(query).fetchone()[0]
+    return datetime.fromisoformat(result) if result else None
+
+def update_stock_data():
+    conn = sqlite3.connect(DB_PATH)
+    print("Updating stock data...")
+
+    for ticker in tqdm(TICKERS, desc="Updating tickers"):
+        last_date = get_last_date(conn, ticker)
+        start_date = last_date + timedelta(days=1) if last_date else datetime(2020, 1, 1)
+        end_date = datetime.today()
+
+        if start_date >= end_date:
+            continue  # уже обновлено
+
+        df = yf.download(
+            ticker,
+            start=start_date.strftime("%Y-%m-%d"),
+            end=end_date.strftime("%Y-%m-%d"),
+            progress=False,
+            auto_adjust=True,
+        )
+
+        if df.empty:
+            continue
+
+        df.reset_index(inplace=True)
+        df["ticker"] = ticker
+        df["return_pct"] = (df["Close"] - df["Open"]) / df["Open"] * 100
+        df["ma7"] = df["Close"].rolling(7).mean()
+        df["volatility"] = df["Close"].rolling(7).std()
+
+        df.to_sql("stocks_data", conn, if_exists="append", index=False)
+
+    conn.close()
+    print("Update complete!")
+
+# === Планировщик ===
+if __name__ == "__main__":
+    # Запускаем один раз при старте
+    update_stock_data()
+
+
+    # Запускаем каждый день в 18:00
+    schedule.every().day.at("18:00").do(update_stock_data)
+
+    print("Scheduler started — waiting for 18:00 daily update...", flush=True)
+    while True:
+        schedule.run_pending()
+        print(f"[{datetime.now().strftime('%H:%M:%S')}] waiting for next scheduled run...", flush=True)
+        time.sleep(60)

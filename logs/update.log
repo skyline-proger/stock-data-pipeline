@@ -1,0 +1,108 @@
+Traceback (most recent call last):
+  File "C:\Users\skywhyline\Desktop\project_stock\main.py", line 61, in <module>
+    update_stock_data()
+    ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\skywhyline\Desktop\project_stock\main.py", line 26, in update_stock_data
+    print("\U0001f4c8 Updating stock data...")
+    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\skywhyline\AppData\Local\Programs\Python\Python313\Lib\encodings\cp1251.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode character '\U0001f4c8' in position 0: character maps to <undefined>
+Traceback (most recent call last):
+  File "C:\Users\skywhyline\Desktop\project_stock\main.py", line 61, in <module>
+    update_stock_data()
+    ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\skywhyline\Desktop\project_stock\main.py", line 26, in update_stock_data
+    print("\U0001f4c8 Updating stock data...")
+    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\skywhyline\AppData\Local\Programs\Python\Python313\Lib\encodings\cp1251.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode character '\U0001f4c8' in position 0: character maps to <undefined>
+Updating stock data...
+Updating tickers:   0%|          | 0/10 [00:00<?, ?it/s]
+1 Failed download:
+['AAPL']: YFPricesMissingError('possibly delisted; no price data found  (1d 2025-10-17 -> 2025-10-17)')
+Updating tickers:  10%|#         | 1/10 [00:01<00:10,  1.12s/it]
+1 Failed download:
+['MSFT']: YFPricesMissingError('possibly delisted; no price data found  (1d 2025-10-17 -> 2025-10-17)')
+Updating tickers:  20%|##        | 2/10 [00:01<00:05,  1.39it/s]
+1 Failed download:
+['NVDA']: YFPricesMissingError('possibly delisted; no price data found  (1d 2025-10-17 -> 2025-10-17)')
+Updating tickers:  30%|###       | 3/10 [00:01<00:04,  1.72it/s]
+1 Failed download:
+['GOOGL']: YFPricesMissingError('possibly delisted; no price data found  (1d 2025-10-17 -> 2025-10-17)')
+Updating tickers:  40%|####      | 4/10 [00:02<00:03,  1.92it/s]
+1 Failed download:
+['AMZN']: YFPricesMissingError('possibly delisted; no price data found  (1d 2025-10-17 -> 2025-10-17)')
+Updating tickers:  50%|#####     | 5/10 [00:02<00:02,  2.11it/s]
+1 Failed download:
+['META']: YFPricesMissingError('possibly delisted; no price data found  (1d 2025-10-17 -> 2025-10-17)')
+Updating tickers:  60%|######    | 6/10 [00:03<00:01,  2.22it/s]
+1 Failed download:
+['TSLA']: YFPricesMissingError('possibly delisted; no price data found  (1d 2025-10-17 -> 2025-10-17)')
+Updating tickers:  70%|#######   | 7/10 [00:03<00:01,  2.31it/s]
+1 Failed download:
+['NFLX']: YFPricesMissingError('possibly delisted; no price data found  (1d 2025-10-17 -> 2025-10-17)')
+Updating tickers:  80%|########  | 8/10 [00:04<00:00,  2.35it/s]
+1 Failed download:
+['INTC']: YFPricesMissingError('possibly delisted; no price data found  (1d 2025-10-17 -> 2025-10-17)')
+Updating tickers:  90%|######### | 9/10 [00:04<00:00,  2.24it/s]
+1 Failed download:
+['AMD']: YFPricesMissingError('possibly delisted; no price data found  (1d 2025-10-17 -> 2025-10-17)')
+Updating tickers: 100%|##########| 10/10 [00:04<00:00,  2.32it/s]Updating tickers: 100%|##########| 10/10 [00:04<00:00,  2.04it/s]
+Update complete!
+Scheduler started — waiting for 18:00 daily update...
+[18:06:34] waiting for next scheduled run...
+Updating stock data...
+Updating tickers:   0%|          | 0/10 [00:00<?, ?it/s]
+1 Failed download:
+['AAPL']: YFPricesMissingError('possibly delisted; no price data found  (1d 2025-10-17 -> 2025-10-17)')
+Updating tickers:  10%|#         | 1/10 [00:01<00:09,  1.03s/it]
+1 Failed download:
+['MSFT']: YFPricesMissingError('possibly delisted; no price data found  (1d 2025-10-17 -> 2025-10-17)')
+Updating tickers:  20%|##        | 2/10 [00:01<00:05,  1.42it/s]
+1 Failed download:
+['NVDA']: YFPricesMissingError('possibly delisted; no price data found  (1d 2025-10-17 -> 2025-10-17)')
+Updating tickers:  30%|###       | 3/10 [00:01<00:03,  1.77it/s]
+1 Failed download:
+['GOOGL']: YFPricesMissingError('possibly delisted; no price data found  (1d 2025-10-17 -> 2025-10-17)')
+Updating tickers:  40%|####      | 4/10 [00:02<00:03,  1.97it/s]
+1 Failed download:
+['AMZN']: YFPricesMissingError('possibly delisted; no price data found  (1d 2025-10-17 -> 2025-10-17)')
+Updating tickers:  50%|#####     | 5/10 [00:02<00:02,  2.14it/s]
+1 Failed download:
+['META']: YFPricesMissingError('possibly delisted; no price data found  (1d 2025-10-17 -> 2025-10-17)')
+Updating tickers:  60%|######    | 6/10 [00:03<00:01,  2.21it/s]
+1 Failed download:
+['TSLA']: YFPricesMissingError('possibly delisted; no price data found  (1d 2025-10-17 -> 2025-10-17)')
+Updating tickers:  70%|#######   | 7/10 [00:03<00:01,  2.26it/s]
+1 Failed download:
+['NFLX']: YFPricesMissingError('possibly delisted; no price data found  (1d 2025-10-17 -> 2025-10-17)')
+Updating tickers:  80%|########  | 8/10 [00:04<00:00,  2.23it/s]
+1 Failed download:
+['INTC']: YFPricesMissingError('possibly delisted; no price data found  (1d 2025-10-17 -> 2025-10-17)')
+Updating tickers:  90%|######### | 9/10 [00:04<00:00,  2.22it/s]
+1 Failed download:
+['AMD']: YFPricesMissingError('possibly delisted; no price data found  (1d 2025-10-17 -> 2025-10-17)')
+Updating tickers: 100%|##########| 10/10 [00:04<00:00,  2.33it/s]Updating tickers: 100%|##########| 10/10 [00:04<00:00,  2.06it/s]
+Update complete!
+Scheduler started — waiting for 18:00 daily update...
+[18:07:17] waiting for next scheduled run...
+[18:08:17] waiting for next scheduled run...
+[18:09:17] waiting for next scheduled run...
+[18:10:17] waiting for next scheduled run...
+[18:11:17] waiting for next scheduled run...
+[18:12:17] waiting for next scheduled run...
+[18:13:17] waiting for next scheduled run...
+[18:14:17] waiting for next scheduled run...
+[18:15:17] waiting for next scheduled run...
+[18:16:17] waiting for next scheduled run...
+[18:17:17] waiting for next scheduled run...
+[18:18:17] waiting for next scheduled run...
+[18:19:17] waiting for next scheduled run...
+[18:20:17] waiting for next scheduled run...
+[18:21:17] waiting for next scheduled run...
+[18:22:17] waiting for next scheduled run...
+[18:23:17] waiting for next scheduled run...
