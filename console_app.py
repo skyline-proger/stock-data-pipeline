@@ -1,3 +1,7 @@
+"""
+console_app.py
+Interactive console for exploring stock data and visualizing performance.
+"""
 import sqlite3
 import pandas as pd
 import matplotlib.pyplot as plt

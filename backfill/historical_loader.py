@@ -1,3 +1,8 @@
+"""
+historical_loader.py
+Initial backfill script for stock data.
+Downloads historical data for multiple tickers and stores it in SQLite.
+"""
 import os
 import yfinance as yf
 import pandas as pd
@@ -6,7 +11,7 @@ from datetime import datetime
 from tqdm import tqdm
 from dotenv import load_dotenv
 
-# === Настройки ===
+# === Configuration ===
 load_dotenv()
 DB_PATH = os.getenv("DB_PATH", "data/stocks.db")
 TICKERS = os.getenv("TICKERS").split(",")
@@ -16,6 +21,7 @@ os.makedirs("data", exist_ok=True)
 
 
 def backfill():
+    """Download full historical data and write to database."""
     conn = sqlite3.connect(DB_PATH)
     all_data = []
 
@@ -27,17 +33,15 @@ def backfill():
             start=START_DATE,
             end=datetime.today().strftime("%Y-%m-%d"),
             progress=False,
-            auto_adjust=True,  # включаем автокоррекцию цен
+            auto_adjust=True,
         )
 
         if df.empty:
             print(f"⚠️ Skipped {ticker} — no data.")
             continue
 
-        # Убираем мультииндекс полностью
-        df.columns = [str(col[0]) if isinstance(col, tuple) else str(col) for col in df.columns]
 
-        # Берём только существующие столбцы (без Adj Close)
+        df.columns = [str(col[0]) if isinstance(col, tuple) else str(col) for col in df.columns]
         cols = [c for c in ["Open", "High", "Low", "Close", "Volume"] if c in df.columns]
         df = df[cols].copy()
 

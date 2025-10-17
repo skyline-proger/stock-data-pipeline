@@ -1,3 +1,8 @@
+"""
+main.py
+Automated stock data updater.
+Checks the latest date for each ticker and downloads new data daily.
+"""
 import os
 import pandas as pd
 import yfinance as yf
@@ -7,21 +12,24 @@ from tqdm import tqdm
 from dotenv import load_dotenv
 import schedule
 import time
-#from tqdm import tqdm
-#tqdm.monitor_interval = 0
 
 
-# === Настройки ===
+
+
+# === Configuration ===
 load_dotenv()
+
 DB_PATH = os.getenv("DB_PATH", "data/stocks.db")
 TICKERS = os.getenv("TICKERS").split(",")
 
 def get_last_date(conn, ticker):
+    """Return the latest date for a ticker in the database."""
     query = f"SELECT MAX(Date) FROM stocks_data WHERE ticker='{ticker}'"
     result = conn.execute(query).fetchone()[0]
     return datetime.fromisoformat(result) if result else None
 
 def update_stock_data():
+    """Download and append new daily data for each ticker."""
     conn = sqlite3.connect(DB_PATH)
     print("Updating stock data...")
 
@@ -31,7 +39,7 @@ def update_stock_data():
         end_date = datetime.today()
 
         if start_date >= end_date:
-            continue  # уже обновлено
+            continue 
 
         df = yf.download(
             ticker,
@@ -55,13 +63,11 @@ def update_stock_data():
     conn.close()
     print("Update complete!")
 
-# === Планировщик ===
-if __name__ == "__main__":
-    # Запускаем один раз при старте
-    update_stock_data()
+ 
+if __name__ == "__main__": 
+    update_stock_data() 
 
 
-    # Запускаем каждый день в 18:00
     schedule.every().day.at("18:00").do(update_stock_data)
 
     print("Scheduler started — waiting for 18:00 daily update...", flush=True)
