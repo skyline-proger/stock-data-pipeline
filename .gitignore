@@ -4,10 +4,12 @@ venv/
 __pycache__/
 *.pyc
 
-# Data and logs
-data/
+# Logs and local data
 logs/
 *.log
+
+# Databases
+data/
 *.db
 
 # OS junk
