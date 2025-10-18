@@ -13,12 +13,8 @@ from dotenv import load_dotenv
 import schedule
 import time
 
-
-
-
 # === Configuration ===
 load_dotenv()
-
 DB_PATH = os.getenv("DB_PATH", "data/stocks.db")
 TICKERS = os.getenv("TICKERS").split(",")
 
@@ -39,7 +35,7 @@ def update_stock_data():
         end_date = datetime.today()
 
         if start_date >= end_date:
-            continue 
+            continue
 
         df = yf.download(
             ticker,
@@ -49,6 +45,16 @@ def update_stock_data():
             auto_adjust=True,
         )
 
+        df.reset_index(inplace=True)
+
+        #FIX: flatten MultiIndex columns like ('Open', 'AAPL')
+        if isinstance(df.columns, pd.MultiIndex):
+            df.columns = [col[0] if isinstance(col, tuple) else col for col in df.columns]
+
+
+        df.columns = [str(c) for c in df.columns]
+        
+        
         if df.empty:
             continue
 
@@ -57,19 +63,18 @@ def update_stock_data():
         df["return_pct"] = (df["Close"] - df["Open"]) / df["Open"] * 100
         df["ma7"] = df["Close"].rolling(7).mean()
         df["volatility"] = df["Close"].rolling(7).std()
-
+        
+        # 🧹 remove unwanted 'index' column if present
+        if "index" in df.columns:
+            df.drop(columns=["index"], inplace=True)
         df.to_sql("stocks_data", conn, if_exists="append", index=False)
 
     conn.close()
     print("Update complete!")
 
- 
-if __name__ == "__main__": 
-    update_stock_data() 
-
-
+if __name__ == "__main__":
+    update_stock_data()
     schedule.every().day.at("18:00").do(update_stock_data)
-
     print("Scheduler started — waiting for 18:00 daily update...", flush=True)
     while True:
         schedule.run_pending()
