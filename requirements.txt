@@ -2,6 +2,7 @@ yfinance
 pandas
 numpy
 sqlalchemy
+psycopg2-binary
 matplotlib
 loguru
 python-dotenv
