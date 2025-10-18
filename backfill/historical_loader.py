@@ -1,28 +1,48 @@
 """
 historical_loader.py
 Initial backfill script for stock data.
-Downloads historical data for multiple tickers and stores it in SQLite.
+Downloads historical data for multiple tickers and stores it in PostgreSQL.
 """
+
+from __future__ import annotations
+
 import os
-import yfinance as yf
-import pandas as pd
-import sqlite3
 from datetime import datetime
-from tqdm import tqdm
+
+import pandas as pd
+import yfinance as yf
 from dotenv import load_dotenv
+from sqlalchemy import create_engine
+from sqlalchemy.engine import Engine
+from tqdm import tqdm
 
 # === Configuration ===
 load_dotenv()
-DB_PATH = os.getenv("DB_PATH", "data/stocks.db")
-TICKERS = os.getenv("TICKERS").split(",")
+DATABASE_URL = os.getenv("DATABASE_URL")
+if not DATABASE_URL:
+    raise RuntimeError(
+        "DATABASE_URL environment variable is required. "
+        "Example: postgresql+psycopg2://user:password@host:5432/database"
+    )
+TICKERS = [ticker.strip().upper() for ticker in os.getenv("TICKERS", "").split(",") if ticker.strip()]
+if not TICKERS:
+    raise RuntimeError("TICKERS environment variable must contain at least one symbol.")
 START_DATE = os.getenv("BACKFILL_START", "2020-01-01")
 
-os.makedirs("data", exist_ok=True)
+_ENGINE: Engine | None = None
+
+
+def get_engine() -> Engine:
+    """Create and cache the SQLAlchemy engine for PostgreSQL."""
+    global _ENGINE
+    if _ENGINE is None:
+        _ENGINE = create_engine(DATABASE_URL, future=True)
+    return _ENGINE
 
 
 def backfill():
     """Download full historical data and write to database."""
-    conn = sqlite3.connect(DB_PATH)
+    engine = get_engine()
     all_data = []
 
     print("📊 Starting historical backfill (clean version)...")
@@ -40,7 +60,6 @@ def backfill():
             print(f"⚠️ Skipped {ticker} — no data.")
             continue
 
-
         df.columns = [str(col[0]) if isinstance(col, tuple) else str(col) for col in df.columns]
         cols = [c for c in ["Open", "High", "Low", "Close", "Volume"] if c in df.columns]
         df = df[cols].copy()
@@ -56,12 +75,17 @@ def backfill():
     if all_data:
         combined = pd.concat(all_data, ignore_index=True)
         combined.columns = [c.replace(" ", "_") for c in combined.columns]
-        combined.to_sql("stocks_data", conn, if_exists="replace", index=False)
-        print(f"✅ Data saved successfully to {DB_PATH}")
+        combined.to_sql(
+            "stocks_data",
+            con=engine,
+            if_exists="replace",
+            index=False,
+            method="multi",
+            chunksize=1000,
+        )
+        print("✅ Data saved successfully to PostgreSQL")
     else:
         print("⚠️ No data downloaded!")
-
-    conn.close()
 
 
 if __name__ == "__main__":

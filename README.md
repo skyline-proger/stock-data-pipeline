@@ -6,17 +6,17 @@ Includes a command-line interface for analysis and visualization.
 ---
 
 ## 🚀 Features
-- Automatic daily updates via Task Scheduler  
-- Historical data backfill from Yahoo Finance  
-- SQLite database with clean, ready-to-use structure  
-- Rolling metrics: **daily return**, **MA(7)**, **volatility**  
-- Interactive console for analysis and charting  
-- Logging of updates and errors  
+- Automatic daily updates via Task Scheduler
+- Historical data backfill from Yahoo Finance
+- PostgreSQL database with clean, ready-to-use structure
+- Rolling metrics: **daily return**, **MA(7)**, **volatility**
+- Interactive console for analysis and charting
+- Logging of updates and errors
 
 ---
 
 ## 🛠️ Tech Stack
-**Python**, **Pandas**, **SQLite**, **yFinance**, **Schedule**, **Matplotlib**
+**Python**, **Pandas**, **PostgreSQL**, **yFinance**, **Schedule**, **Matplotlib**
 
 ---
 
@@ -25,8 +25,6 @@ Includes a command-line interface for analysis and visualization.
 project_stock/
 ├── backfill/
 │   └── historical_loader.py      # Initial historical data loading
-├── data/
-│   └── stocks.db                 # SQLite database (auto-created)
 ├── logs/
 │   └── update.log                # Log file for daily updates
 ├── main.py                       # Daily automatic updater
@@ -46,9 +44,18 @@ cd stock-data-pipeline
 pip install -r requirements.txt
 ```
 
+Create a `.env` file with your configuration:
+```env
+DATABASE_URL=postgresql+psycopg2://user:password@localhost:5432/stocks
+TICKERS=AAPL,MSFT,TSLA
+BACKFILL_START=2020-01-01
+```
+
+Make sure the PostgreSQL database exists and the user has permission to create tables.
+
 If you don’t have a `requirements.txt`, install manually:
 ```bash
-pip install yfinance pandas numpy sqlalchemy matplotlib loguru python-dotenv schedule tabulate tqdm
+pip install yfinance pandas numpy sqlalchemy matplotlib loguru python-dotenv schedule tabulate tqdm psycopg2-binary
 ```
 
 Run the initial backfill:
