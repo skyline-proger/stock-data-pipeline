@@ -6,15 +6,24 @@ Downloads historical data for multiple tickers and stores it in PostgreSQL.
 
 from __future__ import annotations
 
+import logging
 import os
 from datetime import datetime
 
 import pandas as pd
 import yfinance as yf
 from dotenv import load_dotenv
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text
 from sqlalchemy.engine import Engine
 from tqdm import tqdm
+
+from schema import ensure_schema
+
+logging.basicConfig(
+    level=os.getenv("LOG_LEVEL", "INFO").upper(),
+    format="%(asctime)s %(levelname)s %(name)s - %(message)s",
+)
+logger = logging.getLogger(__name__)
 
 # === Configuration ===
 load_dotenv()
@@ -43,9 +52,10 @@ def get_engine() -> Engine:
 def backfill():
     """Download full historical data and write to database."""
     engine = get_engine()
+    ensure_schema(engine)
     all_data = []
 
-    print("📊 Starting historical backfill (clean version)...")
+    logger.info("Starting historical backfill")
 
     for ticker in tqdm(TICKERS, desc="Downloading stocks"):
         df = yf.download(
@@ -57,7 +67,7 @@ def backfill():
         )
 
         if df.empty:
-            print(f"⚠️ Skipped {ticker} — no data.")
+            logger.warning("Skipped %s — no data returned", ticker)
             continue
 
         df.columns = [str(col[0]) if isinstance(col, tuple) else str(col) for col in df.columns]
@@ -75,17 +85,27 @@ def backfill():
     if all_data:
         combined = pd.concat(all_data, ignore_index=True)
         combined.columns = [c.replace(" ", "_") for c in combined.columns]
+
+        combined["return_pct"] = (combined["close"] - combined["open"]) / combined["open"] * 100
+        combined["ma7"] = combined.groupby("ticker")["close"].transform(lambda s: s.rolling(7, min_periods=1).mean())
+        combined["volatility"] = combined.groupby("ticker")["close"].transform(
+            lambda s: s.rolling(7, min_periods=2).std()
+        )
+
+        with engine.begin() as conn:
+            conn.execute(text("DELETE FROM stocks_data"))
+
         combined.to_sql(
             "stocks_data",
             con=engine,
-            if_exists="replace",
+            if_exists="append",
             index=False,
             method="multi",
             chunksize=1000,
         )
-        print("✅ Data saved successfully to PostgreSQL")
+        logger.info("Historical backfill complete: inserted %d rows", len(combined.index))
     else:
-        print("⚠️ No data downloaded!")
+        logger.warning("No data downloaded during backfill")
 
 
 if __name__ == "__main__":
