@@ -1,20 +1,83 @@
-# Virtual environment
-venv/
-.env
+# ======================
+# 🐍 Python
+# ======================
 __pycache__/
-*.pyc
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+*.manifest
+*.spec
 
-# Logs and local data
-logs/
-*.log
+# ======================
+# 🧱 Virtual environments
+# ======================
+venv/
+env/
+.venv/
+pip-wheel-metadata/
+pyvenv.cfg
 
-# Databases
-data/
-*.db
+# ======================
+# 🧰 IDE / Editor
+# ======================
+.vscode/
+.idea/
+*.swp
+*.swo
+*.bak
 
-# OS junk
+# ======================
+# 🧩 OS / System
+# ======================
 .DS_Store
 Thumbs.db
 
-# VS Code settings
-.vscode/
+# ======================
+# 🪣 Logs & Data
+# ======================
+logs/
+*.log
+*.db
+data/
+update.log
+
+# ======================
+# ⚙️ Environment / Secrets
+# ======================
+.env
+.env.local
+*.env.*
+!*.env.example   # исключение — пример переменных можно хранить
+
+# ======================
+# 🐳 Docker
+# ======================
+project_stock_db_data/
+docker-data/
+*.pid
+
+# ======================
+# 🧪 Tests / Temp
+# ======================
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.cache/
+__snapshots__/
+
+# ======================
+# 🔧 Misc
+# ======================
+*.sqlite3
+*.sqlite
+*.tar
+*.zip
+*.7z
+*.bak

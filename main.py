@@ -45,7 +45,7 @@ def get_last_date(engine: Engine, ticker: str) -> datetime | None:
     """Return the latest date for a ticker in the database."""
     with engine.connect() as conn:
         result = conn.execute(
-            text('SELECT MAX("Date") FROM stocks_data WHERE ticker = :ticker'),
+            text('SELECT MAX(date) FROM stocks_data WHERE ticker = :ticker'),
             {"ticker": ticker},
         ).scalar()
 
@@ -59,6 +59,13 @@ def get_last_date(engine: Engine, ticker: str) -> datetime | None:
 
 
 def update_stock_data():
+    from sqlalchemy import inspect
+    engine = get_engine()
+    insp = inspect(engine)
+    print("\n=== DATABASE DEBUG INFO ===", flush=True)
+    print("Connected to:", engine.url, flush=True)
+    print("Tables currently visible:", insp.get_table_names(), flush=True)
+    print("===========================\n", flush=True)
     """Download and append new daily data for each ticker."""
     engine = get_engine()
     print("Updating stock data...")
@@ -80,24 +87,30 @@ def update_stock_data():
         )
 
         df.reset_index(inplace=True)
+        
 
         # FIX: flatten MultiIndex columns like ('Open', 'AAPL')
         if isinstance(df.columns, pd.MultiIndex):
             df.columns = [col[0] if isinstance(col, tuple) else col for col in df.columns]
 
         df.columns = [str(c) for c in df.columns]
+        df.columns = [c.lower() for c in df.columns]  # ✅ added — convert to lowercase
 
         if df.empty:
             continue
 
         df["ticker"] = ticker
-        df["return_pct"] = (df["Close"] - df["Open"]) / df["Open"] * 100
-        df["ma7"] = df["Close"].rolling(7).mean()
-        df["volatility"] = df["Close"].rolling(7).std()
+        df["return_pct"] = (df["close"] - df["open"]) / df["open"] * 100
+        df["ma7"] = df["close"].rolling(7).mean()
+        df["volatility"] = df["close"].rolling(7).std()
 
         # 🧹 remove unwanted 'index' column if present
         if "index" in df.columns:
             df.drop(columns=["index"], inplace=True)
+        from sqlalchemy import inspect
+        insp = inspect(engine)
+        print("Connected to:", engine.url, flush=True)
+        print("Tables visible to SQLAlchemy:", insp.get_table_names(), flush=True)
         df.to_sql(
             "stocks_data",
             con=engine,

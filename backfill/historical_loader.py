@@ -61,14 +61,14 @@ def backfill():
             continue
 
         df.columns = [str(col[0]) if isinstance(col, tuple) else str(col) for col in df.columns]
-        cols = [c for c in ["Open", "High", "Low", "Close", "Volume"] if c in df.columns]
+        cols = [c for c in ["open", "high", "low", "llose", "volume"] if c in df.columns]
         df = df[cols].copy()
 
         df.reset_index(inplace=True)
         df["ticker"] = ticker
-        df["return_pct"] = (df["Close"] - df["Open"]) / df["Open"] * 100
-        df["ma7"] = df["Close"].rolling(7).mean()
-        df["volatility"] = df["Close"].rolling(7).std()
+        df["return_pct"] = (df["close"] - df["open"]) / df["open"] * 100
+        df["ma7"] = df["close"].rolling(7).mean()
+        df["volatility"] = df["close"].rolling(7).std()
 
         all_data.append(df)
 
