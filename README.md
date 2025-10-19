@@ -11,12 +11,13 @@ Includes a command-line interface for analysis and visualization.
 - PostgreSQL database with clean, ready-to-use structure
 - Rolling metrics: **daily return**, **MA(7)**, **volatility**
 - Interactive console for analysis and charting
-- Logging of updates and errors
+- Logging of updates and error
+- Docker
 
 ---
 
 ## 🛠️ Tech Stack
-**Python**, **Pandas**, **PostgreSQL**, **yFinance**, **Schedule**, **Matplotlib**
+**Python**, **Pandas**, **PostgreSQL**, **yFinance**, **Schedule**, **Matplotlib**, **Docker**
 
 ---
 
@@ -24,12 +25,13 @@ Includes a command-line interface for analysis and visualization.
 ```
 project_stock/
 ├── backfill/
-│   └── historical_loader.py      # Initial historical data loading
-├── logs/
-│   └── update.log                # Log file for daily updates
-├── main.py                       # Daily automatic updater
-├── console_app.py                # Interactive console tool
-├── .env                          # Environment configuration
+│   └── historical_loader.py   # Populate the database with historical prices
+├── console_app.py             # Interactive explorer for stored prices
+├── main.py                    # Daily scheduler and incremental updater
+├── docker-compose.yml         # Optional Postgres + app containers
+├── requirements.txt           # Python dependencies
+├── migrate_sqlite_to_postgres.py
+├── test_db.py
 └── README.md
 ```
 
@@ -46,9 +48,11 @@ pip install -r requirements.txt
 
 Create a `.env` file with your configuration:
 ```env
-DATABASE_URL=postgresql+psycopg2://user:password@localhost:5432/stocks
-TICKERS=AAPL,MSFT,TSLA
-BACKFILL_START=2020-01-01
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=123
+POSTGRES_DB=stocks
+TICKERS=AAPL,MSFT,GOOGL,AMZN,TSLA,NVDA,META,AMD,NFLX,INTC
+DATABASE_URL=postgresql+psycopg2://postgres:123@stock_db:5432/stocks
 ```
 
 Make sure the PostgreSQL database exists and the user has permission to create tables.
