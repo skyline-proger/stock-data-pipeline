@@ -81,7 +81,7 @@ def main() -> None:
     # Normalise column names and types
     df.columns = [str(col).strip().replace(" ", "_") for col in df.columns]
     if "date" in df.columns:
-        df["date"] = pd.to_datetime(df["Date"])
+        df["date"] = pd.to_datetime(df["date"])
     if "ticker" in df.columns:
         df["ticker"] = df["ticker"].astype(str).str.upper()
 
