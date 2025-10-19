@@ -61,7 +61,7 @@ def backfill():
             continue
 
         df.columns = [str(col[0]) if isinstance(col, tuple) else str(col) for col in df.columns]
-        cols = [c for c in ["open", "high", "low", "llose", "volume"] if c in df.columns]
+        cols = [c for c in ["open", "high", "low", "close", "volume"] if c in df.columns]
         df = df[cols].copy()
 
         df.reset_index(inplace=True)
